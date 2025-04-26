@@ -1,21 +1,27 @@
 from TarjetaSube import TarjetaSube
-
 def Test():
-	tarjetas = []
-	for i in range(3):
-		print(f"\n=Ingreso de datos para la tarjeta {i+1}:")
-		numero = int(input("Ingrese número de tarjeta: "))
-		saldo = int(input("Ingrese saldo inicial: "))
-		tarjeta = TarjetaSube(saldo, numero)
-		tarjetas.append(tarjeta)
-
-	for i in range(len(tarjetas)):
-		print(f"\n--- Pruebas para la tarjeta {i+1} ---")
-		print(f"Número de tarjeta: {tarjetas[i].get_numero()}")
-		print(f"Saldo actual: ${tarjetas[i].get_saldo()}")
-
-		carga = int(input("Ingrese un monto a cargar: "))
-		tarjetas[i].cargar_saldo(carga)
-
-		pasaje = int(input("Ingrese el costo de un pasaje para pagar: "))
-		tarjetas[i].pagar_pasaje(pasaje)
+  tarjetas = []
+  for i in range(3):
+    print(f"{i+1} -Ingrese los datos:")
+    numero = int(input("Ingrese el numero de la tarjeta : "))
+    saldo = int(input("Ingrese el saldo de la targeta : "))
+    tarjeta = TarjetaSube(saldo, numero)
+    tarjetas.append(tarjeta)
+    
+  for i in range(len(tarjetas)):
+    print(f"\n =Tarjeta: {tarjetas[i]}=")
+    print("\nRealizar carga:")
+    carga = int(input("Ingrese un monto a cargar : "))
+    if carga > 0:
+      tarjetas[i].cargar_saldo(carga)
+    else:
+      print("No se puede cargar monto negarivo")
+  
+  for i in range(len(tarjetas)):
+    print(f"\n =Tarjeta: {tarjetas[i]}=")
+    monto = int(input("Monto a pagar : "))
+    if monto <= tarjetas[i].get_saldo():
+      tarjetas[i].pagar_pasaje(monto)
+      print(tarjetas[i])
+    else:
+      print("Saldo insuficiente")

@@ -1,3 +1,6 @@
+from ManejadorDepartamentos import ManejadorDepartamentos
+from Accidente import Accidente
+
 def menu():
   print("\n--- MENÚ DE OPCIONES ---")
   print("1. Total de accidentes por mes")
@@ -7,45 +10,70 @@ def menu():
   print("5. Registrar accidente")
   print("0. Salir")
 
-def main():
-  manejador = ManejadorDepartamentos()
-  manejador.cargar_desde_archivo()
+def opcion_1(accidentes: Accidente, manejador : ManejadorDepartamentos):
+  mes = int(input("Ingrese número de mes (1-12): "))
+  datos_accidentes = accidentes.get_matriz()
+  for i in range(19):
+    depto = manejador.get_departamento_por_id(i + 1)
+    if depto is not None:
+      print(f"{depto.get_nombre()}: {datos_accidentes[mes-1]} accidentes")
+
+def opcion_2(accidentes : Accidente, manejador : ManejadorDepartamentos):
+  mes = int(input("Ingrese mes: "))
+  resultado = accidentes.mayor_accidentes_en_mes(mes, manejador)
+  if resultado is not None:
+    print(f"Departamento: {resultado['departamento']}, Accidentes: {resultado['accidentes']}")
+  else:
+    print("No hubo resultados concluyentes")
+
+def opcion_3(accidentes: Accidente, manejador: ManejadorDepartamentos):
+  nombre_depto = input("Ingrese nombre del departamento: ")
+  if nombre_depto != "":
+    resultado = accidentes.total_anual_por_departamento(nombre_depto, manejador)
+    if resultado is not None:
+      print(f"Departamento: {resultado['departamento']}, Accidentes: {resultado['accidentes_totales']}")
+    else:
+      print("Departamento no encontrado.")
+  else:
+    print("Nombre de departamento vacío.")
+
+def opcion_4(accidentes : Accidente, manejador : ManejadorDepartamentos):
+  accidentes.mostrar_total_por_departamento(manejador)
+
+def opcion_5(accidentes : Accidente):
+  id_depto = int(input("Ingrese número de departamento (1-19): "))
+  mes = int(input("Ingrese número de mes (1-12): "))
+  cantidad = int(input("Ingrese cantidad de accidentes: "))
+  resultado = accidentes.registrar_accidente(id_depto, mes, cantidad)
+  if resultado > 0:
+    print("Registrado exitosamente")
+  else:
+    print("Ocurrio un error, no se pudo cargar el registro")
+
+
+def main_menu():
+  manejador_deptos = ManejadorDepartamentos()
+  manejador_deptos.cargar_desde_archivo()
   accidentes = Accidente()
+  accidentes.inicializar()
 
   while True:
     menu()
     op = input("Opción: ")
     if op == "1":
-      mes = int(input("Ingrese número de mes (1-12): "))
-      datos = accidentes.total_por_mes(mes)
-      for i in range(19):
-        d = manejador.get_departamento_por_id(i + 1)
-        if d:
-          print(f"{d.get_nombre()}: {datos[i]} accidentes")
-
+      opcion_1(accidentes, manejador_deptos)
+    
     elif op == "2":
-      mes = int(input("Ingrese mes: "))
-      id_dep, cant = accidentes.mayor_accidentes_en_mes(mes)
-      nombre = manejador.get_departamento_por_id(id_dep).get_nombre()
-      print(f"{nombre} tuvo la mayor cantidad: {cant} accidentes")
+      opcion_2(accidentes, manejador_deptos)
 
     elif op == "3":
-      nombre = input("Ingrese nombre del departamento: ")
-      d = manejador.get_departamento_por_nombre(nombre)
-      if d:
-        total = accidentes.total_anual_por_departamento(d.get_id())
-        print(f"{nombre}: {total} accidentes totales")
-      else:
-        print("Departamento no encontrado")
-
+      opcion_3(accidentes, manejador_deptos)
+    
     elif op == "4":
-          accidentes.mostrar_tabla(manejador)
-
+      opcion_4(accidentes, manejador_deptos)
+    
     elif op == "5":
-      id_dep = int(input("Ingrese número de departamento (1-19): "))
-      mes = int(input("Ingrese número de mes (1-12): "))
-      cantidad = int(input("Ingrese cantidad de accidentes: "))
-      accidentes.registrar_accidente(id_dep, mes, cantidad)
+      opcion_5(accidentes)
 
     elif op == "0":
       return

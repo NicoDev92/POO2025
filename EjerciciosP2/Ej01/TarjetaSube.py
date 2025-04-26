@@ -1,5 +1,7 @@
 
 class TarjetaSube:
+  __saldo: int
+  __numero: int
   def __init__(self, saldo: int, numero: int):
     self.__saldo = saldo
     self.__numero = numero
@@ -15,17 +17,9 @@ class TarjetaSube:
     return cadena
 
   def cargar_saldo(self, importe: int):
-    if importe > 0:
-      self.__saldo += importe
-      print(f"Se cargaron ${importe}. Nuevo saldo: ${self.__saldo}")
-    else:
-      print("Error: El importe a cargar debe ser positivo.")
+    self.__saldo += importe
+    return self.__saldo
 
   def pagar_pasaje(self, importe: int):
-    if self.__saldo >= importe:
-      self.__saldo -= importe
-      print(f"Pago exitoso. Nuevo saldo: ${self.__saldo}")
-      return self.__saldo
-    else:
-      print("Saldo insuficiente.")
-      return -1
+    self.__saldo -= importe
+    return self.__saldo

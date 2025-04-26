@@ -1,38 +1,39 @@
 from TarjetaSube import TarjetaSube
 
 class ManejadorTarjetaSube:
-    def __init__(self):
-        self.__tarjetas = []
+  __tarjetas : list
 
-    def agregar_tarjeta(self, una_tarjeta: TarjetaSube):
-        if isinstance(una_tarjeta, TarjetaSube):
-            self.__tarjetas.append(una_tarjeta)
-        else:
-            print("Error: Solo se pueden agregar objetos de tipo TarjetaSube.")
+  def __init__(self):
+    self.__tarjetas = []
+  
+  def agregar_tarjeta(self, nueva_tarjeta : TarjetaSube):
+    if isinstance(nueva_tarjeta, TarjetaSube):
+      self.__tarjetas.append(nueva_tarjeta)
+    else:
+      print("El elemento a agregar no es del tipo Tarjeta SUBE")
 
-    def mostrar_tarjetas_saldo_negativo(self):
-        print("\nTarjetas con saldo negativo:")
-        for i in range(len(self.__tarjetas)):
-            if self.__tarjetas[i].get_saldo() < 0:
-                print(f"→ Número de tarjeta: {self.__tarjetas[i].get_numero()}")
+  def mostrar_saldo_negativo(self):
+    print("= Tarjetas SUBE con saldo negativo =")
+    for i in range(len(self.__tarjetas)):
+      if self.__tarjetas[i].get_saldo() < 0:
+        print(self.__tarjetas[i])
+  
+  def buscar_por_nro_tarjeta(self, nro_buscado : int):
+    encontrado = False
+    i = 0
+    saldo = None
+    while not encontrado and i < len(self.__tarjetas):
+      if self.__tarjetas[i].get_numero() == nro_buscado:
+        saldo = self.__tarjetas[i].get_saldo()
+        encontrado = True
+      i += 1
+    return saldo
 
-    def test(self):
-        for i in range(3):
-            print(f"\n=Ingreso de datos para la tarjeta {i+1} ===")
-            numero = int(input("Ingrese número de tarjeta: "))
-            saldo = int(input("Ingrese saldo inicial: "))
-            tarjeta = TarjetaSube(saldo, numero)
-            self.agregar_tarjeta(tarjeta)
+  def test(self):
+    for i in range(3):
+      print(f"{i+1} -Ingrese los datos:")
+      numero = int(input("Ingrese el numero de la tarjeta : "))
+      saldo = int(input("Ingrese el saldo de la targeta : "))
+      tarjeta = TarjetaSube(saldo, numero)
+      self.__tarjetas.append(tarjeta)
 
-        for i in range(len(self.__tarjetas)):
-            print(f"\n--- Pruebas para la tarjeta {i+1} ---")
-            print(f"Número de tarjeta: {self.__tarjetas[i].get_numero()}")
-            print(f"Saldo actual: ${self.__tarjetas[i].get_saldo()}")
-
-            carga = int(input("Ingrese un monto a cargar: "))
-            self.__tarjetas[i].cargar_saldo(carga)
-
-            pasaje = int(input("Ingrese el costo de un pasaje para pagar: "))
-            self.__tarjetas[i].pagar_pasaje(pasaje)
-
-        self.mostrar_tarjetas_saldo_negativo()

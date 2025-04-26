@@ -13,5 +13,5 @@ class Departamento:
     return self.__nombre
 
   def __str__(self):
-    cadena = f"ID:{self.__id} Nombre: {self.__nombre}"
+    cadena = f"= ID:{self.__id} Nombre: {self.__nombre}"
     return cadena
