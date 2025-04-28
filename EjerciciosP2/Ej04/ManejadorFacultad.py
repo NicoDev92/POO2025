@@ -1,5 +1,8 @@
-import numpy as np
 from Facultad import Facultad
+from Carrera import Carrera
+import numpy as np
+import os
+import csv
 
 class ManejadorFacultad:
   __facultades : None
@@ -24,22 +27,85 @@ class ManejadorFacultad:
     self.__facultades[self.__cantidad_facultades] = nueva_facultad
     self.__cantidad_facultades += 1
   
-  def mostrar_cantidad_carreras(self):
-    for i in range(self.__cantidad_facultades):
-      print(f"{self.__facultades[i].get_nombre()} tiene {self.__facultades[i].get_cantidad_carreras()}")
-  
-  def mostrar_carreras_alf(self, nombre_facultad: str):
+  def buscar_facultad_por_codigo(self, codigo : int):
     encontrado = False
     i = 0
-    while not encontrado and i < self.__cantidad_facultades:
-      if self.__facultades[i].get_nombre().lower() == nombre_facultad.lower():
-        encontrado = True
-        carreras = self.__facultades[i].get_carreras()
-        carreras_ordenadas = sorted(carreras)
-        print(f"\nCarreras de la facultad {nombre_facultad} (orden alfabético):")
-        for carrera in carreras_ordenadas:
-          print(carrera)  # Esto usa el método __str__ de la clase Carrera
-      i += 1
+    facultad = None
     
-    if not encontrado:
-        print(f"No se encontró la facultad: {nombre_facultad}")
+    while not encontrado and i < len(self.__facultades):
+      if self.__facultades[i].get_codigo() == codigo:
+        facultad = self.__facultades[i]
+        encontrado = True
+      i += 1
+    return facultad
+  
+  def buscar_facultad_por_nombre(self, nombre : str):
+    encontrado = False
+    i = 0
+    facultad = None
+    
+    while not encontrado and i < len(self.__facultades):
+      if self.__facultades[i].get_nombre().lower() == nombre.lower():
+        facultad = self.__facultades[i]
+        encontrado = True
+      i += 1
+    return facultad
+  
+  def __lector_archivos(self, nombre_archivo : str, separador=","):
+    lector = None
+    archivo = None
+    if nombre_archivo != "" and separador != "":
+      ruta_archivo = os.path.join(os.path.dirname(__file__), nombre_archivo)
+      archivo = open(ruta_archivo, mode="r", encoding="latin-1")
+      lector = csv.reader(archivo, delimiter=separador)
+    respuesta = {"lector": lector, "archivo":archivo}
+    return respuesta
+
+  def cargar_desde_archivo(self):
+    datos_facultades = self.__lector_archivos("Facultades.csv", ";")
+    datos_carreras = self.__lector_archivos("Carreras.csv", ";")
+    
+    archivo_facultades = datos_facultades["archivo"]
+    archivo_carreras = datos_carreras["archivo"]
+    
+    lector_facultades = datos_facultades["lector"]
+    lector_carreras = datos_carreras["lector"]
+    
+    next(lector_facultades)
+    next(lector_carreras)
+    
+    carreras = []
+
+    for fila_carrera in lector_carreras:
+        carreras.append(fila_carrera)
+
+    for fila_facultad in lector_facultades:
+        nueva_facultad = Facultad(int(fila_facultad[0]), fila_facultad[1], fila_facultad[2], fila_facultad[3], fila_facultad[4], 1)
+        for fila_carrera in carreras:
+            if fila_carrera[5] == fila_facultad[0]:
+                nueva_carrera = Carrera(int(fila_carrera[0]), fila_carrera[1], "",fila_carrera[3],fila_carrera[2],int(fila_carrera[5]))
+                nueva_facultad.agregar_carrera(nueva_carrera)
+        self.agregar_facultad(nueva_facultad)
+
+    archivo_facultades.close()
+    archivo_carreras.close()
+
+  def calcular_cantidad_carreras(self):
+    detalle_facultad = {"facultad": "", "cantidad_carreras" : 0}
+    resultados = []
+    for i in range(self.__cantidad_facultades):
+      detalle_facultad = {"facultad": self.__facultades[i].get_nombre(),
+                          "cantidad_carreras": self.__facultades[i].get_cantidad_carreras()}
+      resultados.append(detalle_facultad)
+    return resultados
+  
+  def listar_carreras_alfabeticamente(self, nombre_facultad: str):
+    facultad = self.buscar_facultad_por_nombre(nombre_facultad)
+    carreras = []
+    if facultad is not None:
+      aux_carreras = facultad.get_carreras()
+      for carrera in aux_carreras:
+        if carrera is not None:
+          carreras.append(carrera)
+      carreras.sort()
+    return carreras
